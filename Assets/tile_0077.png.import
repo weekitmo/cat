@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmmom4iyjdxlb"
-path="res://.godot/imported/mouse.png-66da426a73d7a7e2fd85393269b189ec.ctex"
+uid="uid://lh7a8m1w51pw"
+path="res://.godot/imported/tile_0077.png-2265971869f650836fec9a9f239fbbc4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/mouse.png"
-dest_files=["res://.godot/imported/mouse.png-66da426a73d7a7e2fd85393269b189ec.ctex"]
+source_file="res://Assets/tile_0077.png"
+dest_files=["res://.godot/imported/tile_0077.png-2265971869f650836fec9a9f239fbbc4.ctex"]
 
 [params]
 

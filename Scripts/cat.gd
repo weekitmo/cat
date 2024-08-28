@@ -6,9 +6,9 @@ extends CharacterBody2D
 @onready var transfor_timer: Timer = $TransforTimer
 @onready var state_machine: StateMachine = $StateMachine
 
-@export var cat_size: Vector2
+@export var cat_size: Vector2 = Vector2(32, 32)
 
-var offset = 160
+var offset = 100
 var dragging = false
 var direction_int: Vector2i = Vector2i.ZERO
 var speed = 5
@@ -35,16 +35,24 @@ const STATE_MAP := {
 func _ready() -> void:
 	var screen_size: Vector2i = get_window().size
 	randomize()
-	get_viewport().set_size(cat_sprite.texture.get_size())
-	var custom_cursor: CompressedTexture2D = load("res://Assets/mouse.png")
+	#print(cat_sprite.texture.get_size())
+	print(cat_size)
+	get_viewport().set_size(cat_size)
+	offset = max(cat_size.x, cat_size.y)
+	print("offset: {0}".format([offset]))
+	var custom_cursor: CompressedTexture2D = load("res://Assets/tile_0578.png")
 	var image_texture = ImageTexture.create_from_image(custom_cursor.get_image())
-	Input.set_custom_mouse_cursor(image_texture, Input.CURSOR_ARROW, Vector2(16, 16))
+	Input.set_custom_mouse_cursor(image_texture, Input.CURSOR_ARROW, Vector2(8, 8))
 
 
 func tick_physics(state: State, delta: float) -> void:
 	if dragging:
 		# 把窗口拖动到鼠标位置
 		get_window().position += Vector2i(get_global_mouse_position())
+		state_machine.update_screen_info()
+		#var current_screen_index = state_machine.screen_info["current_screen_index"] as int
+		#print(state_machine.screen_info)
+		return
 	match state:
 		State.IDLE_1, State.IDLE_2, State.IDLE_3, State.IDLE_4, State.LIE:
 			pass
@@ -106,7 +114,7 @@ func transition_state(from: State, to: State) -> void:
 			animation_player.play("move_5")
 		State.LIE:
 			# 睡觉
-			print("lie amination length: {0}".format([animation_player.get_animation("lie").length]))
+			#print("lie amination length: {0}".format([animation_player.get_animation("lie").length]))
 			transfor_timer.wait_time = 8
 			animation_player.play("lie")
 
@@ -114,17 +122,17 @@ func transition_state(from: State, to: State) -> void:
 
 
 func move() -> void:
+	state_machine.update_screen_info()
 	var current_screen_size = state_machine.screen_info["current_screen_size"] as Vector2i
-	var game_window = state_machine.screen_info["game_window"] as Vector2i
+	var window_pos = state_machine.screen_info["window_pos"] as Vector2i
+	var window_in_current_display_pos = state_machine.screen_info["window_in_current_display_pos"] as Vector2i
 	var min: Vector2i = Vector2i(offset, offset)
 	var max: Vector2i = current_screen_size - min
 
-	var temp = get_window().position + direction_int
-
-	if temp.x >= max.x or temp.x <= min.x:
+	if window_in_current_display_pos.x >= max.x or window_in_current_display_pos.x <= min.x:
 		# 翻转
 		direction_int.x = -direction_int.x
-	if temp.y >= max.y or temp.y <= min.y:
+	if window_in_current_display_pos.y >= max.y or window_in_current_display_pos.y <= min.y:
 		direction_int.y = -direction_int.y
 
 	# 翻转，默认是朝右边
